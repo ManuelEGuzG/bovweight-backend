@@ -3,8 +3,9 @@ name: CI – Backend
 on:
   push:
     branches: [main, develop]
+
   pull_request:
-    branches: [main, develop]
+    branches: [main]
 
 jobs:
   test:
@@ -13,15 +14,23 @@ jobs:
     services:
       mysql:
         image: mysql:8.0
-        env:
+
+        env :
           MYSQL_DATABASE: bovweight_test
           MYSQL_ROOT_PASSWORD: secret
+
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -29,19 +38,27 @@ jobs:
           php-version: '8.2'
           extensions: mbstring, pdo_mysql, bcmath, gd
 
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist
-
       - name: Copy .env
         run: cp .env.example .env
 
-      - name: Generate key
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Generate application key
         run: php artisan key:generate
+
+      - name: Set permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Wait for MySQL
+        run: sleep 15
 
       - name: Run migrations
         run: php artisan migrate --force
         env:
+          DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
+          DB_PORT: 3306
           DB_DATABASE: bovweight_test
           DB_USERNAME: root
           DB_PASSWORD: secret
@@ -49,7 +66,11 @@ jobs:
       - name: Run tests
         run: php artisan test
         env:
+          DB_CONNECTION: mysql
           DB_HOST: 127.0.0.1
+          DB_PORT: 3306
           DB_DATABASE: bovweight_test
           DB_USERNAME: root
           DB_PASSWORD: secret
+
+          
