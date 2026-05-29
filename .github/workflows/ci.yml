@@ -15,7 +15,7 @@ jobs:
       mysql:
         image: mysql:8.0
 
-        env:
+        env :
           MYSQL_DATABASE: bovweight_test
           MYSQL_ROOT_PASSWORD: secret
 
@@ -72,3 +72,5 @@ jobs:
           DB_DATABASE: bovweight_test
           DB_USERNAME: root
           DB_PASSWORD: secret
+
+          
