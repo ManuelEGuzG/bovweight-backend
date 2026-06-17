@@ -17,6 +17,7 @@ class MlServiceTest extends TestCase
         $this->service = new MlService();
     }
 
+    // Verifica que estimateWeight() retorna correctamente los datos del ML al recibir respuesta 200
     public function test_estimate_weight_retorna_respuesta_del_ml(): void
     {
         Http::fake([
@@ -36,6 +37,7 @@ class MlServiceTest extends TestCase
         $this->assertEquals(0.92, $resultado['confidence']);
     }
 
+    // Verifica que estimateWeight() hace la petición HTTP al endpoint correcto del servicio ML
     public function test_estimate_weight_realiza_llamada_al_endpoint_correcto(): void
     {
         Http::fake([
@@ -55,6 +57,7 @@ class MlServiceTest extends TestCase
         });
     }
 
+    // Verifica que estimateWeight() lanza RuntimeException cuando el ML responde con error 500
     public function test_estimate_weight_lanza_excepcion_si_el_ml_retorna_error(): void
     {
         Http::fake([
@@ -67,6 +70,7 @@ class MlServiceTest extends TestCase
         $this->service->estimateWeight($foto);
     }
 
+    // Verifica que sendFeedback() envía los datos correctos al endpoint de feedback del ML
     public function test_send_feedback_envia_los_datos_correctos(): void
     {
         Http::fake([
@@ -85,6 +89,7 @@ class MlServiceTest extends TestCase
         });
     }
 
+    // Verifica que sendFeedback() retorna un array vacío cuando el ML responde sin cuerpo
     public function test_send_feedback_retorna_array_vacio_si_ml_no_responde(): void
     {
         Http::fake([
@@ -97,6 +102,7 @@ class MlServiceTest extends TestCase
         $this->assertEmpty($resultado);
     }
 
+    // Verifica que sendFeedback() retorna un array vacío cuando ocurre una excepción de conexión
     public function test_send_feedback_retorna_array_vacio_si_hay_excepcion(): void
     {
         Http::fake(function () {

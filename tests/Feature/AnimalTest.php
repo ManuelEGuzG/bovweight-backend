@@ -17,6 +17,7 @@ class AnimalTest extends TestCase
         return [$persona, $finca];
     }
 
+    // Verifica que un ganadero asignado puede listar los animales de su finca
     public function test_listar_animales_de_finca_accesible(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -27,6 +28,7 @@ class AnimalTest extends TestCase
             ->assertJsonCount(3);
     }
 
+    // Verifica que un ganadero no asignado a la finca recibe 403 al intentar listar animales
     public function test_no_puede_listar_animales_de_finca_no_asignada(): void
     {
         $this->actingAsPersona('Ganadero');
@@ -36,6 +38,7 @@ class AnimalTest extends TestCase
             ->assertForbidden();
     }
 
+    // Verifica que se puede registrar un nuevo animal con datos válidos en una finca accesible
     public function test_crear_animal_con_datos_validos(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -48,6 +51,7 @@ class AnimalTest extends TestCase
           ->assertJsonFragment(['numero_arete' => 'AR-001']);
     }
 
+    // Verifica que al crear un animal sin especificar estado, se asigna 'Bien' como estado por defecto
     public function test_crear_animal_sin_estado_asigna_bien_por_defecto(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -62,6 +66,7 @@ class AnimalTest extends TestCase
         $this->assertEquals('Bien', $animal->estado->nombre_estado);
     }
 
+    // Verifica que no se puede registrar un animal con un número de arete ya existente (422)
     public function test_crear_animal_numero_arete_duplicado(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -75,6 +80,7 @@ class AnimalTest extends TestCase
           ->assertJsonValidationErrors(['numero_arete']);
     }
 
+    // Verifica que el campo 'sexo' solo acepta valores 'macho' o 'hembra', rechazando otros con 422
     public function test_crear_animal_sexo_invalido(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -87,6 +93,7 @@ class AnimalTest extends TestCase
           ->assertJsonValidationErrors(['sexo']);
     }
 
+    // Verifica que se puede consultar el detalle de un animal específico por su número de arete
     public function test_ver_animal_especifico(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -97,6 +104,7 @@ class AnimalTest extends TestCase
             ->assertJsonFragment(['numero_arete' => $animal->numero_arete]);
     }
 
+    // Verifica que se pueden actualizar los datos de un animal existente
     public function test_actualizar_animal(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -109,6 +117,7 @@ class AnimalTest extends TestCase
          ->assertJsonFragment(['nombre' => 'Pepita']);
     }
 
+    // Verifica que al eliminar un animal se aplica soft delete y el registro permanece en BD
     public function test_eliminar_animal_soft_delete(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -120,6 +129,7 @@ class AnimalTest extends TestCase
         $this->assertSoftDeleted($animal);
     }
 
+    // Verifica que se puede cambiar el estado de salud de un animal a través del endpoint de estado
     public function test_cambiar_estado_animal(): void
     {
         [$persona, $finca] = $this->crearFincaConAcceso('Ganadero');
@@ -134,6 +144,7 @@ class AnimalTest extends TestCase
         $this->assertEquals('Enfermo', $animal->fresh()->estado->nombre_estado);
     }
 
+    // Verifica que el administrador puede crear animales en cualquier finca sin estar asignado
     public function test_admin_puede_crear_animal_en_cualquier_finca(): void
     {
         $this->actingAsPersona('Administrador');

@@ -19,6 +19,7 @@ class FincaPolicyTest extends TestCase
 
     // ── view ─────────────────────────────────────────────────────────────────
 
+    // Verifica que un ganadero registrado en el pivote de la finca puede verla
     public function test_view_ganadero_asignado_puede_ver_finca(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -28,6 +29,7 @@ class FincaPolicyTest extends TestCase
         $this->assertTrue($this->policy->view($ganadero, $finca));
     }
 
+    // Verifica que un ganadero no registrado en el pivote no puede ver la finca
     public function test_view_ganadero_no_asignado_no_puede_ver_finca(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -38,6 +40,7 @@ class FincaPolicyTest extends TestCase
 
     // ── update ───────────────────────────────────────────────────────────────
 
+    // Verifica que un ganadero asignado al pivote puede actualizar la finca
     public function test_update_ganadero_asignado_puede_actualizar(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -47,6 +50,7 @@ class FincaPolicyTest extends TestCase
         $this->assertTrue($this->policy->update($ganadero, $finca));
     }
 
+    // Verifica que un ganadero no asignado no puede actualizar la finca
     public function test_update_ganadero_no_asignado_no_puede_actualizar(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -57,6 +61,7 @@ class FincaPolicyTest extends TestCase
 
     // ── delete ───────────────────────────────────────────────────────────────
 
+    // Verifica que un ganadero marcado como dueño en el pivote puede eliminar la finca
     public function test_delete_ganadero_dueno_puede_eliminar(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -66,6 +71,7 @@ class FincaPolicyTest extends TestCase
         $this->assertTrue($this->policy->delete($ganadero, $finca));
     }
 
+    // Verifica que un ganadero asignado pero no dueño no puede eliminar la finca
     public function test_delete_ganadero_no_dueno_no_puede_eliminar(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -75,6 +81,7 @@ class FincaPolicyTest extends TestCase
         $this->assertFalse($this->policy->delete($ganadero, $finca));
     }
 
+    // Verifica que un asistente asignado tampoco puede eliminar la finca aunque esté en el pivote
     public function test_delete_asistente_no_puede_eliminar(): void
     {
         $asistente = $this->crearPersona('Asistente');

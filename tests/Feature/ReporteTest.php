@@ -19,6 +19,7 @@ class ReporteTest extends TestCase
         return [$admin, $finca, $animal];
     }
 
+    // Verifica que el endpoint de reporte retorna un JSON con la estructura correcta incluyendo totales
     public function test_resumen_finca_json(): void
     {
         [$admin, $finca, $animal] = $this->prepararFincaAdmin();
@@ -29,6 +30,7 @@ class ReporteTest extends TestCase
             ->assertJsonFragment(['total_animales' => 1]);
     }
 
+    // Verifica que el reporte de historial de un animal retorna ganancia total y el detalle de pesajes
     public function test_historial_animal_reporte_json(): void
     {
         [$admin, $finca, $animal] = $this->prepararFincaAdmin();
@@ -44,6 +46,7 @@ class ReporteTest extends TestCase
          ->assertJsonStructure(['animal', 'ganancia_total', 'historial']);
     }
 
+    // Verifica que el endpoint de descarga genera y retorna el archivo Excel correctamente
     public function test_export_excel(): void
     {
         Excel::fake();
@@ -58,6 +61,7 @@ class ReporteTest extends TestCase
         Excel::assertDownloaded($filename);
     }
 
+    // Verifica que el endpoint de PDF retorna una respuesta con Content-Type 'application/pdf'
     public function test_export_pdf(): void
     {
         [$admin, $finca] = $this->prepararFincaAdmin();
@@ -71,6 +75,7 @@ class ReporteTest extends TestCase
         );
     }
 
+    // Verifica que un ganadero no asignado a la finca recibe 403 al intentar ver el reporte
     public function test_reporte_finca_no_asignada_retorna_403(): void
     {
         $this->actingAsPersona('Ganadero');
@@ -80,6 +85,7 @@ class ReporteTest extends TestCase
             ->assertForbidden();
     }
 
+    // Verifica que el reporte de una finca sin animales retorna total_animales en 0
     public function test_resumen_finca_sin_animales(): void
     {
         $this->actingAsPersona('Administrador');
