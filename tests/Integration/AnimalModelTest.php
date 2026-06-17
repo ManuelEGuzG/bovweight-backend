@@ -10,6 +10,7 @@ use Tests\TestCase;
 
 class AnimalModelTest extends TestCase
 {
+    // Verifica que un animal eliminado no aparece en consultas normales pero sí con withTrashed()
     public function test_animal_eliminado_no_aparece_en_queries_normales(): void
     {
         $animal = Animal::factory()->create();
@@ -20,6 +21,7 @@ class AnimalModelTest extends TestCase
         $this->assertNotNull(Animal::withTrashed()->find($arete));
     }
 
+    // Verifica que la relación 'historiales' devuelve los registros ordenados del más reciente al más antiguo
     public function test_historiales_ordenados_del_mas_reciente_al_mas_antiguo(): void
     {
         $finca = Finca::factory()->create();
@@ -40,6 +42,7 @@ class AnimalModelTest extends TestCase
         $this->assertEquals($ultimo->id_historial, $animal->historiales->first()->id_historial);
     }
 
+    // Verifica que ultimoHistorial() retorna únicamente el historial con la fecha de creación más reciente
     public function test_ultimo_historial_retorna_el_registro_mas_reciente(): void
     {
         $finca = Finca::factory()->create();
@@ -60,12 +63,14 @@ class AnimalModelTest extends TestCase
         $this->assertEquals($ultimo->id_historial, $animal->ultimoHistorial->id_historial);
     }
 
+    // Verifica que la relación 'estado' devuelve una instancia correcta del modelo EstadoAnimal
     public function test_relacion_estado_pertenece_a_estado_animal(): void
     {
         $animal = Animal::factory()->create();
         $this->assertInstanceOf(EstadoAnimal::class, $animal->estado);
     }
 
+    // Verifica que la relación 'finca' devuelve una instancia correcta del modelo Finca
     public function test_relacion_finca_pertenece_a_finca(): void
     {
         $animal = Animal::factory()->create();

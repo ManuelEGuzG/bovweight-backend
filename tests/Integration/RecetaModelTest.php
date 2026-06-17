@@ -25,18 +25,21 @@ class RecetaModelTest extends TestCase
         ]);
     }
 
+    // Verifica que la relación 'medicamento' devuelve una instancia correcta del modelo Medicamento
     public function test_relacion_medicamento_pertenece_a_medicamento(): void
     {
         $receta = $this->crearReceta();
         $this->assertInstanceOf(Medicamento::class, $receta->medicamento);
     }
 
+    // Verifica que la relación 'veterinario' devuelve una instancia correcta del modelo Persona
     public function test_relacion_veterinario_pertenece_a_persona(): void
     {
         $receta = $this->crearReceta();
         $this->assertInstanceOf(Persona::class, $receta->veterinario);
     }
 
+    // Verifica que la relación 'animal' devuelve una instancia correcta del modelo Animal
     public function test_relacion_animal_pertenece_a_animal(): void
     {
         $receta = $this->crearReceta();

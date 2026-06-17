@@ -22,12 +22,14 @@ class HistorialAnimalModelTest extends TestCase
         ]);
     }
 
+    // Verifica que la relación 'asignador' devuelve una instancia correcta del modelo Persona
     public function test_relacion_asignador_pertenece_a_persona(): void
     {
         $historial = $this->crearHistorial();
         $this->assertInstanceOf(Persona::class, $historial->asignador);
     }
 
+    // Verifica que la relación 'animal' devuelve una instancia correcta del modelo Animal
     public function test_relacion_animal_pertenece_a_animal(): void
     {
         $historial = $this->crearHistorial();

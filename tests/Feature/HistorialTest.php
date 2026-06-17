@@ -21,6 +21,7 @@ class HistorialTest extends TestCase
         return [$persona, $finca, $animal];
     }
 
+    // Verifica que el historial de pesajes se retorna paginado con los registros correctos
     public function test_listar_historial_paginado(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -37,6 +38,7 @@ class HistorialTest extends TestCase
         $this->assertCount(5, $response->json('data'));
     }
 
+    // Verifica que se puede registrar un pesaje manual enviando solo el campo 'peso'
     public function test_crear_pesaje_manual(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -48,6 +50,7 @@ class HistorialTest extends TestCase
          ->assertJsonFragment(['metodo' => 'manual']);
     }
 
+    // Verifica que un peso por debajo del mínimo permitido falla con error de validación 422
     public function test_crear_pesaje_manual_peso_por_debajo_del_minimo(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -59,6 +62,7 @@ class HistorialTest extends TestCase
          ->assertJsonValidationErrors(['peso']);
     }
 
+    // Verifica que un peso por encima del máximo permitido falla con error de validación 422
     public function test_crear_pesaje_manual_peso_por_encima_del_maximo(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -70,6 +74,7 @@ class HistorialTest extends TestCase
          ->assertJsonValidationErrors(['peso']);
     }
 
+    // Verifica que crear un pesaje sin foto ni peso falla indicando que ambos campos son requeridos
     public function test_crear_pesaje_sin_foto_ni_peso_falla(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -81,6 +86,7 @@ class HistorialTest extends TestCase
          ->assertJsonValidationErrors(['foto', 'peso']);
     }
 
+    // Verifica que se puede registrar un pesaje vía fotografía cuando el servicio ML responde correctamente
     public function test_crear_pesaje_por_foto_con_ml_exitoso(): void
     {
         Storage::fake('public');
@@ -107,6 +113,7 @@ class HistorialTest extends TestCase
          ->assertJsonFragment(['metodo' => 'fotografia']);
     }
 
+    // Verifica que se puede consultar el detalle de un registro de historial específico
     public function test_ver_pesaje_especifico(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -121,6 +128,7 @@ class HistorialTest extends TestCase
          ->assertJsonFragment(['id_historial' => $historial->id_historial]);
     }
 
+    // Verifica que se puede registrar el peso real de un pesaje y el servicio ML recibe el feedback
     public function test_corregir_peso_real(): void
     {
         $this->mock(MlService::class, function ($mock) {
@@ -142,6 +150,7 @@ class HistorialTest extends TestCase
         $this->assertEquals(320.0, $historial->fresh()->peso_real);
     }
 
+    // Verifica que un peso real fuera del rango permitido falla con error de validación 422
     public function test_corregir_peso_real_invalido(): void
     {
         [$persona, $finca, $animal] = $this->prepararEscenario();
@@ -157,6 +166,7 @@ class HistorialTest extends TestCase
          ->assertJsonValidationErrors(['peso_real']);
     }
 
+    // Verifica que consultar el historial de una finca no asignada retorna 403
     public function test_historial_finca_no_asignada_retorna_403(): void
     {
         $this->actingAsPersona('Ganadero');

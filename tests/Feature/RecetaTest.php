@@ -20,6 +20,7 @@ class RecetaTest extends TestCase
         return [$vet, $finca, $animal, $medicamento];
     }
 
+    // Verifica que se puede listar las recetas registradas para un animal específico
     public function test_listar_recetas_de_animal(): void
     {
         [$vet, $finca, $animal, $medicamento] = $this->prepararEscenarioVet();
@@ -35,6 +36,7 @@ class RecetaTest extends TestCase
          ->assertJsonCount(2);
     }
 
+    // Verifica que un veterinario asignado a la finca puede crear recetas para los animales
     public function test_veterinario_con_acceso_puede_crear_receta(): void
     {
         [$vet, $finca, $animal, $medicamento] = $this->prepararEscenarioVet();
@@ -51,6 +53,7 @@ class RecetaTest extends TestCase
         )->assertStatus(201);
     }
 
+    // Verifica que el ganadero no tiene permiso para crear recetas y recibe 403
     public function test_ganadero_no_puede_crear_receta(): void
     {
         $ganadero = $this->actingAsPersona('Ganadero');
@@ -70,6 +73,7 @@ class RecetaTest extends TestCase
         )->assertForbidden();
     }
 
+    // Verifica que el asistente no tiene permiso para crear recetas y recibe 403
     public function test_asistente_no_puede_crear_receta(): void
     {
         $asistente = $this->actingAsPersona('Asistente');
@@ -89,6 +93,7 @@ class RecetaTest extends TestCase
         )->assertForbidden();
     }
 
+    // Verifica que la receta falla con 422 si se referencia un medicamento que no existe
     public function test_crear_receta_medicamento_inexistente(): void
     {
         [$vet, $finca, $animal, $medicamento] = $this->prepararEscenarioVet();
@@ -105,6 +110,7 @@ class RecetaTest extends TestCase
          ->assertJsonValidationErrors(['id_medicamento']);
     }
 
+    // Verifica que 'duracion_dias' no puede superar el máximo permitido (365 días)
     public function test_crear_receta_duracion_dias_invalida(): void
     {
         [$vet, $finca, $animal, $medicamento] = $this->prepararEscenarioVet();
@@ -121,6 +127,7 @@ class RecetaTest extends TestCase
          ->assertJsonValidationErrors(['duracion_dias']);
     }
 
+    // Verifica que se puede consultar el detalle de una receta específica por su ID
     public function test_ver_receta_especifica(): void
     {
         [$vet, $finca, $animal, $medicamento] = $this->prepararEscenarioVet();
@@ -136,6 +143,7 @@ class RecetaTest extends TestCase
          ->assertJsonFragment(['id_receta' => $receta->id_receta]);
     }
 
+    // Verifica que un veterinario puede eliminar únicamente las recetas que él mismo emitió
     public function test_veterinario_puede_eliminar_su_propia_receta(): void
     {
         [$vet, $finca, $animal, $medicamento] = $this->prepararEscenarioVet();
@@ -152,6 +160,7 @@ class RecetaTest extends TestCase
         $this->assertDatabaseMissing('recetas', ['id_receta' => $receta->id_receta]);
     }
 
+    // Verifica que un veterinario no puede eliminar recetas emitidas por otro veterinario (403)
     public function test_veterinario_no_puede_eliminar_receta_de_otro_veterinario(): void
     {
         $vet1 = $this->actingAsPersona('Veterinario');
@@ -172,6 +181,7 @@ class RecetaTest extends TestCase
         )->assertForbidden();
     }
 
+    // Verifica que el administrador puede eliminar cualquier receta sin restricción de autoría
     public function test_admin_puede_eliminar_cualquier_receta(): void
     {
         $this->actingAsPersona('Administrador');

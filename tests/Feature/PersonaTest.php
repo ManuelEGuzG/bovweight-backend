@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 class PersonaTest extends TestCase
 {
+    // Verifica que el administrador puede listar todas las personas del sistema
     public function test_admin_puede_listar_personas(): void
     {
         $this->actingAsPersona('Administrador');
@@ -19,6 +20,7 @@ class PersonaTest extends TestCase
             ->assertJsonCount(3);
     }
 
+    // Verifica que el ganadero también tiene acceso al listado de personas
     public function test_ganadero_puede_listar_personas(): void
     {
         $this->actingAsPersona('Ganadero');
@@ -26,6 +28,7 @@ class PersonaTest extends TestCase
         $this->getJson('/api/v1/personas')->assertOk();
     }
 
+    // Verifica que el asistente no tiene permiso para listar personas y recibe 403
     public function test_asistente_no_puede_listar_personas(): void
     {
         $this->actingAsPersona('Asistente');
@@ -33,6 +36,7 @@ class PersonaTest extends TestCase
         $this->getJson('/api/v1/personas')->assertForbidden();
     }
 
+    // Verifica que el veterinario no tiene permiso para listar personas y recibe 403
     public function test_veterinario_no_puede_listar_personas(): void
     {
         $this->actingAsPersona('Veterinario');
@@ -40,6 +44,7 @@ class PersonaTest extends TestCase
         $this->getJson('/api/v1/personas')->assertForbidden();
     }
 
+    // Verifica que el administrador puede crear una persona con todos los datos requeridos
     public function test_admin_crea_persona_con_datos_validos(): void
     {
         $this->actingAsPersona('Administrador');
@@ -57,6 +62,7 @@ class PersonaTest extends TestCase
           ->assertJsonFragment(['cedula' => '999888777']);
     }
 
+    // Verifica que no se puede crear una persona con una cédula ya registrada en el sistema
     public function test_crear_persona_falla_cedula_duplicada(): void
     {
         $this->actingAsPersona('Administrador');
@@ -75,6 +81,7 @@ class PersonaTest extends TestCase
           ->assertJsonValidationErrors(['cedula']);
     }
 
+    // Verifica que no se puede crear una persona con un correo ya registrado en el sistema
     public function test_crear_persona_falla_correo_duplicado(): void
     {
         $this->actingAsPersona('Administrador');
@@ -93,6 +100,7 @@ class PersonaTest extends TestCase
           ->assertJsonValidationErrors(['correo']);
     }
 
+    // Verifica que la creación falla con 422 si no se envía la confirmación de contraseña
     public function test_crear_persona_falla_sin_confirmation_password(): void
     {
         $this->actingAsPersona('Administrador');
@@ -109,6 +117,7 @@ class PersonaTest extends TestCase
           ->assertJsonValidationErrors(['contrasena']);
     }
 
+    // Verifica que se puede obtener el detalle de una persona específica por su cédula
     public function test_ver_persona_especifica(): void
     {
         $this->actingAsPersona('Administrador');
@@ -119,6 +128,7 @@ class PersonaTest extends TestCase
             ->assertJsonFragment(['cedula' => $persona->cedula]);
     }
 
+    // Verifica que al eliminar una persona se aplica soft delete y el registro permanece en BD
     public function test_desactivar_persona_soft_delete(): void
     {
         $this->actingAsPersona('Administrador');
@@ -130,6 +140,7 @@ class PersonaTest extends TestCase
         $this->assertSoftDeleted($persona);
     }
 
+    // Verifica que se puede obtener el listado de fincas asignadas a una persona
     public function test_listar_fincas_de_persona(): void
     {
         $this->actingAsPersona('Administrador');
@@ -142,6 +153,7 @@ class PersonaTest extends TestCase
             ->assertJsonCount(1);
     }
 
+    // Verifica que se pueden sincronizar las fincas de una persona reemplazando las asignaciones existentes
     public function test_sincronizar_fincas_de_persona(): void
     {
         $this->actingAsPersona('Administrador');

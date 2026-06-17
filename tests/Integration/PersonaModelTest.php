@@ -7,8 +7,7 @@ use Tests\TestCase;
 
 class PersonaModelTest extends TestCase
 {
-    // ── fincasAccesiblesIds (requiere BD) ────────────────────────────────────
-
+    // Verifica que el administrador obtiene los IDs de todas las fincas del sistema
     public function test_admin_obtiene_ids_de_todas_las_fincas(): void
     {
         $admin = $this->crearPersona('Administrador');
@@ -19,6 +18,7 @@ class PersonaModelTest extends TestCase
         $this->assertCount(3, $ids);
     }
 
+    // Verifica que el ganadero solo obtiene los IDs de las fincas que tiene asignadas en el pivote
     public function test_ganadero_obtiene_solo_ids_de_fincas_asignadas(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
@@ -32,6 +32,7 @@ class PersonaModelTest extends TestCase
         $this->assertContains($asignada->id_finca, $ids);
     }
 
+    // Verifica que un ganadero sin fincas asignadas recibe un array vacío
     public function test_usuario_sin_fincas_retorna_array_vacio(): void
     {
         $ganadero = $this->crearPersona('Ganadero');
