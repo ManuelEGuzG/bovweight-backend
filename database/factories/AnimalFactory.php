@@ -18,7 +18,15 @@ class AnimalFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'numero_arete'     => $this->faker->unique()->bothify('AR-####??'),
+            'nombre'           => $this->faker->optional()->firstName(),
+            'id_finca'         => \App\Models\Finca::factory(),
+            'sexo'             => $this->faker->randomElement(['macho', 'hembra']),
+            'raza'             => $this->faker->randomElement(['Holstein', 'Angus', 'Brahman', 'Jersey']),
+            'fecha_nacimiento' => $this->faker->optional()->date(),
+            'nota_general'     => $this->faker->optional()->sentence(),
+            'id_estado'        => fn() => \App\Models\EstadoAnimal::where('nombre_estado', 'Bien')->value('id_estado'),
+            'activo'           => true,
         ];
     }
 }
