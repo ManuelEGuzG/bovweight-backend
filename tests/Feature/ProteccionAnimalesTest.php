@@ -16,8 +16,9 @@ class ProteccionAnimalesTest extends TestCase
     public function test_crear_animal_requiere_autenticacion()
     {
         $response = $this->postJson('/api/v1/fincas/1/animales', [
-            'nombre' => 'Toro Prueba',
-            'numero_arete' => 'A-001'
+            'numero_arete' => 'TEST-001',
+            'nombre' => 'Animal de prueba',
+            'sexo' => 'Macho'
         ]);
 
         $response->assertStatus(401);
